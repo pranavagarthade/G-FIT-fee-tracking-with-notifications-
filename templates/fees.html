@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fees Management</title>
+</head>
+<body>
+    <h1>Fees Management</h1>
+
+    <!-- Form for adding a new fee record -->
+    <form method="POST" action="{{ url_for('fees') }}">
+        <label for="student_id">Select Student:</label>
+        <select name="student_id" id="student_id" required>
+            <!-- Assuming you pass a list of students from the backend -->
+            {% for student in students %}
+                <option value="{{ student['_id'] }}">{{ student['name'] }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="amount_paid">Amount Paid:</label>
+        <input type="number" name="amount_paid" id="amount_paid" required><br><br>
+
+        <label for="payment_date">Payment Date:</label>
+        <input type="date" name="payment_date" id="payment_date" required><br><br>
+
+        <label for="membership_duration">Membership Duration:</label>
+        <select name="membership_duration" id="membership_duration" required>
+            <option value="1 month">1 Month</option>
+            <option value="3 months">3 Months</option>
+            <option value="6 months">6 Months</option>
+            <option value="1 year">1 Year</option>
+        </select><br><br>
+
+        <label for="status">Payment Status:</label>
+        <select name="status" id="status" required>
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+        </select><br><br>
+
+        <button type="submit">Add Fee Record</button>
+    </form>
+
+    <!-- Display list of all fee records -->
+    <h2>Existing Fee Records</h2>
+    <table border="1">
+        <tr>
+            <th>Student Name</th>
+            <th>Amount Paid</th>
+            <th>Payment Date</th>
+            <th>Membership Duration</th>
+            <th>Membership Expiry</th>
+            <th>Status</th>
+        </tr>
+        {% for fee in fees %}
+        <tr>
+            <td>{{ fee['student_name'] }}</td>
+            <td>{{ fee['amount_paid'] }}</td>
+            <td>{{ fee['payment_date'] }}</td>
+            <td>{{ fee['membership_duration'] }}</td>
+            <td>{{ fee['membership_expiry'] }}</td>
+            <td>{{ fee['status'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Optionally, you can include a notification or flash message here -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul>
+        {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+</body>
+</html>

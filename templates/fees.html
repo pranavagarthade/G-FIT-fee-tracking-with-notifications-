@@ -4,75 +4,213 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fees Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --background-color: #f7f9fc;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            background-color: var(--background-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .fees-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-control, .form-select {
+            border-color: #e1e6eb;
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead {
+            background-color: #f8f9fa;
+            color: var(--text-color);
+        }
+
+        .badge-success {
+            background-color: #2ecc71;
+        }
+
+        .badge-warning {
+            background-color: #f39c12;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .fees-container {
+                padding: 0 0.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Fees Management</h1>
+    <div class="container fees-container">
+        <div class="page-header">
+            <h1>Fees Management</h1>
+        </div>
 
-    <!-- Form for adding a new fee record -->
-    <form method="POST" action="{{ url_for('fees') }}">
-        <label for="student_id">Select Student:</label>
-        <select name="student_id" id="student_id" required>
-            <!-- Assuming you pass a list of students from the backend -->
-            {% for student in students %}
-                <option value="{{ student['_id'] }}">{{ student['name'] }}</option>
-            {% endfor %}
-        </select><br><br>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Add Fee Record</h4>
+                        <form method="POST" action="{{ url_for('fees') }}">
+                            <div class="mb-3">
+                                <label for="student_id" class="form-label">Student</label>
+                                <select class="form-select" name="student_id" id="student_id" required>
+                                    {% for student in students %}
+                                        <option value="{{ student['_id'] }}">{{ student['name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
-        <label for="amount_paid">Amount Paid:</label>
-        <input type="number" name="amount_paid" id="amount_paid" required><br><br>
+                            <div class="mb-3">
+                                <label for="amount_paid" class="form-label">Amount</label>
+                                <input type="number" class="form-control" name="amount_paid" id="amount_paid" required>
+                            </div>
 
-        <label for="payment_date">Payment Date:</label>
-        <input type="date" name="payment_date" id="payment_date" required><br><br>
+                            <div class="mb-3">
+                                <label for="payment_date" class="form-label">Payment Date</label>
+                                <input type="date" class="form-control" name="payment_date" id="payment_date" required>
+                            </div>
 
-        <label for="membership_duration">Membership Duration:</label>
-        <select name="membership_duration" id="membership_duration" required>
-            <option value="1 month">1 Month</option>
-            <option value="3 months">3 Months</option>
-            <option value="6 months">6 Months</option>
-            <option value="1 year">1 Year</option>
-        </select><br><br>
+                            <div class="mb-3">
+                                <label for="membership_duration" class="form-label">Membership</label>
+                                <select class="form-select" name="membership_duration" id="membership_duration" required>
+                                    <option value="1 month">1 Month</option>
+                                    <option value="3 months">3 Months</option>
+                                    <option value="6 months">6 Months</option>
+                                    <option value="1 year">1 Year</option>
+                                </select>
+                            </div>
 
-        <label for="status">Payment Status:</label>
-        <select name="status" id="status" required>
-            <option value="Paid">Paid</option>
-            <option value="Pending">Pending</option>
-        </select><br><br>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" name="status" id="status" required>
+                                    <option value="Paid">Paid</option>
+                                    <option value="Pending">Pending</option>
+                                </select>
+                            </div>
 
-        <button type="submit">Add Fee Record</button>
-    </form>
+                            <button type="submit" class="btn btn-primary w-100">Add Record</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Display list of all fee records -->
-    <h2>Existing Fee Records</h2>
-    <table border="1">
-        <tr>
-            <th>Student Name</th>
-            <th>Amount Paid</th>
-            <th>Payment Date</th>
-            <th>Membership Duration</th>
-            <th>Membership Expiry</th>
-            <th>Status</th>
-        </tr>
-        {% for fee in fees %}
-        <tr>
-            <td>{{ fee['student_name'] }}</td>
-            <td>{{ fee['amount_paid'] }}</td>
-            <td>{{ fee['payment_date'] }}</td>
-            <td>{{ fee['membership_duration'] }}</td>
-            <td>{{ fee['membership_expiry'] }}</td>
-            <td>{{ fee['status'] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Fee Records</h4>
+                        {% for month, fees in fees_by_month.items() %}
+                        <div class="mb-4">
+                            <h5 class="mb-3">{{ month }}</h5>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            <th>Amount</th>
+                                            <th>Date</th>
+                                            <th>Membership</th>
+                                            <th>Expiry</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for fee in fees %}
+                                        <tr>
+                                            <td>{{ fee['student_name'] }}</td>
+                                            <td>₹{{ fee['amount_paid'] }}</td>
+                                            <td>{{ fee['payment_date'] }}</td>
+                                            <td>{{ fee['membership_duration'] }}</td>
+                                            <td>{{ fee['membership_expiry'] }}</td>
+                                            <td>
+                                                <span class="badge 
+                                                    {% if fee['status'] == 'Paid' %}badge-success
+                                                    {% else %}badge-warning{% endif %}">
+                                                    {{ fee['status'] }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Optionally, you can include a notification or flash message here -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <ul>
-        {% for category, message in messages %}
-            <li class="{{ category }}">{{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-    {% endwith %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="row mt-4">
+                <div class="col-12">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

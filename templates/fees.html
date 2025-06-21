@@ -5,191 +5,185 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fees Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --background-color: #f7f9fc;
-            --card-background: #ffffff;
-            --text-color: #2c3e50;
-        }
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='feestyle.css') }}">
 
-        body {
-            background-color: var(--background-color);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        .fees-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .form-control, .form-select {
-            border-color: #e1e6eb;
-            border-radius: 8px;
-            padding: 0.75rem;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .table {
-            margin-bottom: 0;
-        }
-
-        .table thead {
-            background-color: #f8f9fa;
-            color: var(--text-color);
-        }
-
-        .badge-success {
-            background-color: #2ecc71;
-        }
-
-        .badge-warning {
-            background-color: #f39c12;
-        }
-
-        .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
-
-        .page-header h1 {
-            margin: 0;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            .fees-container {
-                padding: 0 0.5rem;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="container fees-container">
-        <div class="page-header">
-            <h1>Fees Management</h1>
+        <div class="page-header fade-in">
+            <h1><i class="fas fa-money-bill-wave me-3"></i>Fees Management</h1>
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalStudents">0</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalRecords">0</div>
+                    <div class="stat-label">Fee Records</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalAmount">₹0</div>
+                    <div class="stat-label">Total Collected</div>
+                </div>
+            </div>
         </div>
 
         <div class="row">
-            <div class="col-md-4">
-                <div class="card mb-4">
+            <div class="col-lg-4">
+                <div class="card fade-in">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Add Fee Record</h4>
+                        <h4 class="card-title mb-4">
+                            <i class="fas fa-plus-circle me-2 text-primary"></i>Add Fee Record
+                        </h4>
                         <form method="POST" action="{{ url_for('fees') }}">
-                            <div class="mb-3">
-                                <label for="student_id" class="form-label">Student</label>
+                            <div class="form-floating mb-3">
                                 <select class="form-select" name="student_id" id="student_id" required>
+                                    <option value="">Choose student...</option>
                                     {% for student in students %}
                                         <option value="{{ student['_id'] }}">{{ student['name'] }}</option>
                                     {% endfor %}
                                 </select>
+                                <label for="student_id"><i class="fas fa-user me-2"></i>Student</label>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="amount_paid" class="form-label">Amount</label>
-                                <input type="number" class="form-control" name="amount_paid" id="amount_paid" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="payment_date" class="form-label">Payment Date</label>
-                                <input type="date" class="form-control" name="payment_date" id="payment_date" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="membership_duration" class="form-label">Membership</label>
-                                <select class="form-select" name="membership_duration" id="membership_duration" required>
-                                    <option value="1 month">1 Month</option>
-                                    <option value="3 months">3 Months</option>
-                                    <option value="6 months">6 Months</option>
-                                    <option value="1 year">1 Year</option>
+                            <div class="form-floating mb-3">
+                                <select class="form-select" name="membership_duration" id="membership_duration" required onchange="updateAmount()">
+                                    <option value="">Select plan...</option>
+                                    <option value="1 month">1 Month - ₹1000</option>
+                                    <option value="3 months">3 Months - ₹2500</option>
+                                    <option value="6 months">6 Months - ₹4500</option>
+                                    <option value="1 year">12 Months - ₹8500</option>
                                 </select>
+                                <label for="membership_duration"><i class="fas fa-calendar-alt me-2"></i>Membership Plan</label>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="status" class="form-label">Status</label>
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control" name="amount_paid" id="amount_paid" required readonly>
+                                <label for="amount_paid"><i class="fas fa-rupee-sign me-2"></i>Amount</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="date" class="form-control" name="payment_date" id="payment_date" required>
+                                <label for="payment_date"><i class="fas fa-calendar me-2"></i>Payment Date</label>
+                            </div>
+
+                            <div class="form-floating mb-4">
                                 <select class="form-select" name="status" id="status" required>
                                     <option value="Paid">Paid</option>
                                     <option value="Pending">Pending</option>
                                 </select>
+                                <label for="status"><i class="fas fa-check-circle me-2"></i>Status</label>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100">Add Record</button>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-save me-2"></i>Add Record
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-8">
-                <div class="card">
+            <div class="col-lg-8">
+                <div class="card fade-in">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Fee Records</h4>
-                        {% for month, fees in fees_by_month.items() %}
-                        <div class="mb-4">
-                            <h5 class="mb-3">{{ month }}</h5>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Student</th>
-                                            <th>Amount</th>
-                                            <th>Date</th>
-                                            <th>Membership</th>
-                                            <th>Expiry</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for fee in fees %}
-                                        <tr>
-                                            <td>{{ fee['student_name'] }}</td>
-                                            <td>₹{{ fee['amount_paid'] }}</td>
-                                            <td>{{ fee['payment_date'] }}</td>
-                                            <td>{{ fee['membership_duration'] }}</td>
-                                            <td>{{ fee['membership_expiry'] }}</td>
-                                            <td>
-                                                <span class="badge 
-                                                    {% if fee['status'] == 'Paid' %}badge-success
-                                                    {% else %}badge-warning{% endif %}">
-                                                    {{ fee['status'] }}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="card-title mb-0">
+                                <i class="fas fa-list-alt me-2 text-primary"></i>Fee Records
+                            </h4>
+                        </div>
+                        
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="form-control search-input" id="searchInput" 
+                                   placeholder="Search by student name, month, or amount...">
+                            <button type="button" class="clear-search" id="clearSearch">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div class="table-container" id="recordsContainer">
+                            {% for month, fees in fees_by_month.items() %}
+                            <div class="month-section" data-month="{{ month }}">
+                                <h5 class="month-header">
+                                    <span><i class="fas fa-calendar-month me-2"></i>{{ month }}</span>
+                                    <span class="month-count">{{ fees|length }} records</span>
+                                </h5>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th><i class="fas fa-user me-2"></i>Student</th>
+                                                <th><i class="fas fa-rupee-sign me-2"></i>Amount</th>
+                                                <th><i class="fas fa-calendar me-2"></i>Date</th>
+                                                <th><i class="fas fa-clock me-2"></i>Duration</th>
+                                                <th><i class="fas fa-calendar-times me-2"></i>Expiry</th>
+                                                <th><i class="fas fa-info-circle me-2"></i>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for fee in fees %}
+                                            <tr class="fee-record" 
+                                                data-student-name="{{ fee['student_name']|lower }}"
+                                                data-amount="{{ fee['amount_paid'] }}"
+                                                data-date="{{ fee['payment_date'] }}"
+                                                data-duration="{{ fee['membership_duration']|lower }}"
+                                                data-status="{{ fee['status']|lower }}">
+                                                <td class="student-name">{{ fee['student_name'] }}</td>
+                                                <td class="amount">₹{{ fee['amount_paid'] }}</td>
+                                                <td>{{ fee['payment_date'] }}</td>
+                                                <td>{{ fee['membership_duration'] }}</td>
+                                                <td>{{ fee['membership_expiry'] }}</td>
+                                                <td>
+                                                    <span class="badge status-toggle {% if fee['status'] == 'Paid' %}badge-success{% else %}badge-warning{% endif %}"
+                                                      data-id="{{ fee['_id'] }}"
+                                                      data-status="{{ fee['status'] }}"
+                                                      style="cursor: pointer;">
+                                                        {% if fee['status'] == 'Paid' %}
+                                                            <i class="fas fa-check me-1"></i>
+                                                        {% else %}
+                                                            <i class="fas fa-clock me-1"></i>
+                                                        {% endif %}
+                                                        {{ fee['status'] }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            
+                            <div class="no-results" id="noResults" style="display: none;">
+                                <i class="fas fa-search"></i>
+                                <h5>No records found</h5>
+                                <p>Try adjusting your search criteria</p>
                             </div>
                         </div>
-                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Duplicate Warning -->
+        <div class="modal fade" id="duplicateFeeModal" tabindex="-1" aria-labelledby="duplicateFeeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="duplicateFeeModalLabel">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Duplicate Fee Warning
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <i class="fas fa-info-circle me-2"></i>
+                        This student already has an active membership. Please wait until expiry to add a new one.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Close
+                        </button>
                     </div>
                 </div>
             </div>
@@ -197,20 +191,188 @@
 
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            <div class="row mt-4">
-                <div class="col-12">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
+        <div class="row mt-4">
+            <div class="col-12">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                {% endfor %}
             </div>
+        </div>
         {% endif %}
         {% endwith %}
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.status-toggle').forEach(badge => {
+                badge.addEventListener('click', function () {
+                    const feeId = this.dataset.id;
+                    const currentStatus = this.dataset.status;
+        
+                    if (currentStatus === 'Pending') {
+                        fetch('/update-status', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                  // If using Flask-WTF
+                            },
+                            body: JSON.stringify({ id: feeId })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                this.classList.remove('badge-warning');
+                                this.classList.add('badge-success');
+                                this.innerHTML = '<i class="fas fa-check me-1"></i> Paid';
+                                this.dataset.status = 'Paid';
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        const pricing = {
+            "1 month": 1000,
+            "3 months": 2500,
+            "6 months": 4500,
+            "1 year": 8500
+        };
+
+        function updateAmount() {
+            const plan = document.getElementById('membership_duration').value;
+            document.getElementById('amount_paid').value = pricing[plan] || '';
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const clearSearch = document.getElementById('clearSearch');
+        const noResults = document.getElementById('noResults');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm.length > 0) {
+                clearSearch.style.display = 'block';
+            } else {
+                clearSearch.style.display = 'none';
+            }
+            
+            filterRecords(searchTerm);
+        });
+
+        clearSearch.addEventListener('click', function() {
+            searchInput.value = '';
+            clearSearch.style.display = 'none';
+            filterRecords('');
+        });
+
+        function filterRecords(searchTerm) {
+            const monthSections = document.querySelectorAll('.month-section');
+            let hasVisibleRecords = false;
+
+            monthSections.forEach(section => {
+                const records = section.querySelectorAll('.fee-record');
+                let sectionHasVisible = false;
+
+                records.forEach(record => {
+                    const studentName = record.dataset.studentName;
+                    const amount = record.dataset.amount;
+                    const date = record.dataset.date;
+                    const duration = record.dataset.duration;
+                    const status = record.dataset.status;
+                    const monthName = section.dataset.month.toLowerCase();
+
+                    const isMatch = studentName.includes(searchTerm) ||
+                                   amount.includes(searchTerm) ||
+                                   date.includes(searchTerm) ||
+                                   duration.includes(searchTerm) ||
+                                   status.includes(searchTerm) ||
+                                   monthName.includes(searchTerm);
+
+                    if (isMatch) {
+                        record.style.display = '';
+                        sectionHasVisible = true;
+                        hasVisibleRecords = true;
+                        highlightText(record, searchTerm);
+                    } else {
+                        record.style.display = 'none';
+                        removeHighlight(record);
+                    }
+                });
+
+                section.style.display = sectionHasVisible ? '' : 'none';
+            });
+
+            noResults.style.display = hasVisibleRecords ? 'none' : 'block';
+        }
+
+        function highlightText(element, searchTerm) {
+            if (!searchTerm) return;
+
+            const studentNameCell = element.querySelector('.student-name');
+            const amountCell = element.querySelector('.amount');
+            
+            [studentNameCell, amountCell].forEach(cell => {
+                if (cell) {
+                    const text = cell.textContent;
+                    const regex = new RegExp(`(${searchTerm})`, 'gi');
+                    const highlightedText = text.replace(regex, '<span class="highlight">$1</span>');
+                    cell.innerHTML = highlightedText;
+                }
+            });
+        }
+
+        function removeHighlight(element) {
+            const cells = element.querySelectorAll('.student-name, .amount');
+            cells.forEach(cell => {
+                if (cell) {
+                    cell.innerHTML = cell.textContent;
+                }
+            });
+        }
+
+        // Calculate and display statistics
+        function updateStats() {
+            const studentSelect = document.getElementById('student_id');
+            const totalStudents = studentSelect.options.length - 1; // Subtract the placeholder option
+            
+            const allRecords = document.querySelectorAll('.fee-record');
+            const totalRecords = allRecords.length;
+            
+            let totalAmount = 0;
+            allRecords.forEach(record => {
+                const amount = parseInt(record.dataset.amount) || 0;
+                totalAmount += amount;
+            });
+
+            document.getElementById('totalStudents').textContent = totalStudents;
+            document.getElementById('totalRecords').textContent = totalRecords;
+            document.getElementById('totalAmount').textContent = `₹${totalAmount.toLocaleString()}`;
+        }
+
+        // Set today's date as default
+        document.getElementById('payment_date').value = new Date().toISOString().split('T')[0];
+
+        // Initialize stats
+        updateStats();
+
+        // Show duplicate modal if needed
+        {% if show_popup %}
+        const duplicateModal = new bootstrap.Modal(document.getElementById('duplicateFeeModal'));
+        duplicateModal.show();
+        {% endif %}
+
+        // Add smooth scrolling for search results
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    </script>
 </body>
 </html>

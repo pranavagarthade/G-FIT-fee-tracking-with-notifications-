@@ -6,16 +6,30 @@
     <title>Send Notifications - Geetanjali Yoga & Fitness Zone</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container mt-4">
-        <h1>Send Membership Expiry Notifications</h1>
-        <form method="POST">
-            <div class="mb-3">
-                <label for="message" class="form-label">Message</label>
-                <textarea name="message" class="form-control" rows="4" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Send Notifications</button>
-        </form>
-    </div>
+<body class="container mt-4">
+
+    <h2 class="mb-4">Send Custom Notification</h2>
+
+    <form method="POST" action="/send_notification">
+        <div class="mb-3">
+            <label for="subject" class="form-label">Subject</label>
+            <input type="text" class="form-control" id="subject" name="subject" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="message" class="form-label">Message</label>
+            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input class="form-check-input" type="checkbox" id="only_expired" name="only_expired">
+            <label class="form-check-label" for="only_expired">
+                Send to expired members only
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Send Notification</button>
+    </form>
+
 </body>
 </html>

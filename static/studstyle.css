@@ -1,4 +1,3 @@
-
 :root {
     --primary-color: #6366f1;
     --primary-dark: #4f46e5;
@@ -144,6 +143,17 @@ body {
     background: #dc2626;
     transform: translateY(-2px);
     box-shadow: 0 8px 15px -3px rgba(239, 68, 68, 0.4);
+}
+
+.btn-warning {
+    background: var(--warning-color);
+    color: white;
+    border: none;
+}
+
+.btn-warning:hover {
+    background: #d97706;
+    color: white;
 }
 
 .stats-grid {
@@ -321,6 +331,49 @@ body {
     color: #9ca3af;
 }
 
+/* File Upload Styles */
+.file-upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: var(--border-radius);
+    background: #f9fafb;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.file-upload-area:hover {
+    border-color: var(--primary-color);
+    background: #f3f4f6;
+}
+
+.file-upload-area.drag-over {
+    border-color: var(--primary-color);
+    background: #eff6ff;
+    border-width: 3px;
+}
+
+.file-info {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.import-instructions ol {
+    padding-left: 1.5rem;
+}
+
+.import-instructions li {
+    margin-bottom: 0.5rem;
+}
+
 .fade-in {
     animation: fadeIn 0.5s ease-in;
 }
@@ -352,6 +405,7 @@ body {
         padding: 0.6rem 1.2rem;
         font-size: 0.9rem;
         margin-bottom: 0.5rem;
+        width: 100%;
     }
     
     .stats-grid {
@@ -361,5 +415,9 @@ body {
     
     .table-responsive {
         font-size: 0.85rem;
+    }
+    
+    .col-md-6.text-end {
+        text-align: left !important;
     }
 }
